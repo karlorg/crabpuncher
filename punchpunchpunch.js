@@ -9,7 +9,7 @@
 
   pgBonkTime = 300;
 
-  pgSquashTime = 1000;
+  pgSquashTime = 1200;
 
   pgSpeed = 2;
 
@@ -61,6 +61,13 @@
     pgSprite.headGraphic.animations.add('bonk', [5], 1, true);
     pgSprite.headGraphic.animations.add('squash', [6], 1, true);
     pgSprite.headGraphic.animations.play('normal');
+    pgSprite.armsGraphic = pgSprite.addChild(game.add.sprite(0, 0, 'punchguy'));
+    pgSprite.armsGraphic.animations.add('normal', [7], 1, true);
+    pgSprite.armsGraphic.animations.add('leftWindup', [8], 1, true);
+    pgSprite.armsGraphic.animations.add('leftPunch', [9], 1, true);
+    pgSprite.armsGraphic.animations.add('rightWindup', [10], 1, true);
+    pgSprite.armsGraphic.animations.add('rightPunch', [11], 1, true);
+    pgSprite.armsGraphic.animations.play('normal');
     pgSolidBoxes = game.add.group(pgSprite);
     pgSolidBoxes.enableBody = true;
     solidBox0 = pgSolidBoxes.create(0, 0, null);
@@ -143,16 +150,18 @@
   };
 
   brickHeadCollision = function(head, brick) {
-    pgState = 'bonk';
-    pgHeadState = 'bonk';
-    timer.add(pgBonkTime, function() {
-      pgState = 'normal';
-      return pgHeadState = 'squash';
-    });
-    timer.add(pgSquashTime, function() {
-      return pgHeadState = 'normal';
-    });
-    timer.start();
+    if (pgHeadState === 'normal') {
+      pgState = 'bonk';
+      pgHeadState = 'bonk';
+      timer.add(pgBonkTime, function() {
+        pgState = 'normal';
+        return pgHeadState = 'squash';
+      });
+      timer.add(pgSquashTime, function() {
+        return pgHeadState = 'normal';
+      });
+      timer.start();
+    }
     return bounceBrick(brick, head);
   };
 

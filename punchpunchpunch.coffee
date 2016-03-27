@@ -5,7 +5,7 @@
 brickSpawnDelayLower = 1500
 brickSpawnDelayUpper = 3000
 pgBonkTime = 300
-pgSquashTime = 1000
+pgSquashTime = 1200
 pgSpeed = 2
 
 bricks = null
@@ -41,12 +41,22 @@ create = ->
   pgSprite.animations.add 'walkright', [1, 2, 0], 6, true
   pgSprite.animations.add 'walkleft', [2, 1, 0], 6, true
   pgSprite.animations.add 'bonk', [3], 1, true
+
   pgSprite.headGraphic = pgSprite.addChild(
     game.add.sprite(0, 0, 'punchguy'))
   pgSprite.headGraphic.animations.add 'normal', [4], 1, true
   pgSprite.headGraphic.animations.add 'bonk', [5], 1, true
   pgSprite.headGraphic.animations.add 'squash', [6], 1, true
   pgSprite.headGraphic.animations.play 'normal'
+
+  pgSprite.armsGraphic = pgSprite.addChild(
+    game.add.sprite(0, 0, 'punchguy'))
+  pgSprite.armsGraphic.animations.add 'normal', [7], 1, true
+  pgSprite.armsGraphic.animations.add 'leftWindup', [8], 1, true
+  pgSprite.armsGraphic.animations.add 'leftPunch', [9], 1, true
+  pgSprite.armsGraphic.animations.add 'rightWindup', [10], 1, true
+  pgSprite.armsGraphic.animations.add 'rightPunch', [11], 1, true
+  pgSprite.armsGraphic.animations.play 'normal'
 
   pgSolidBoxes = game.add.group pgSprite
   pgSolidBoxes.enableBody = true
@@ -108,13 +118,14 @@ brickSolidCollision = (box, brick) ->
   bounceBrick(brick, box)
 
 brickHeadCollision = (head, brick) ->
-  pgState = 'bonk'
-  pgHeadState = 'bonk'
-  timer.add pgBonkTime, ->
-    pgState = 'normal'
-    pgHeadState = 'squash'
-  timer.add pgSquashTime, -> pgHeadState = 'normal'
-  timer.start()
+  if pgHeadState == 'normal'
+    pgState = 'bonk'
+    pgHeadState = 'bonk'
+    timer.add pgBonkTime, ->
+      pgState = 'normal'
+      pgHeadState = 'squash'
+    timer.add pgSquashTime, -> pgHeadState = 'normal'
+    timer.start()
   bounceBrick(brick, head)
 
 bounceBrick = (brick, box) ->
